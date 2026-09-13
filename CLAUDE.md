@@ -34,8 +34,9 @@ Three files, each with one responsibility:
 
 ### Core model (`game.js`)
 
-- `board`: a `ROWS × COLS` matrix; each cell is `0` (empty) or a piece-color index `1–7`.
-- `PIECES`: the 7 tetrominoes as square matrices; `COLORS[i]` gives the fill color for index `i`.
+- `board`: a `ROWS × COLS` matrix; each cell is `0` (empty), a piece-color index `1–8`, or `-1` (solid-but-invisible hole cell — see below).
+- `PIECES`: the 7 classic tetrominoes plus an 8th 3×3 "tuerca" (nut) piece with a `-1` marker at its center; square matrices; `COLORS[i]` gives the fill color for index `i`.
+- The `-1` hole marker is truthy, so `collide()`/`merge()`/`clearLines()` treat it as solid/filled with no code changes — only `drawBlock()` special-cases it (`colorIndex <= 0` skips painting), leaving the board background visible through the nut's center once it locks.
 - `current` / `next`: `{ type, shape, x, y }` — `next` is generated ahead of time and swapped in by `spawn()`.
 - Rotation is done by matrix transpose+reverse (`rotateCW`), not by lookup tables.
 - `tryRotate()` implements wall kicks by retrying the rotated shape at x-offsets `[0, -1, 1, -2, 2]` until one doesn't collide.
